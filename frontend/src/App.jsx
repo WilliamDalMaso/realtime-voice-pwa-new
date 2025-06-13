@@ -13,7 +13,13 @@ export default function App() {
     // 1. fetch ephemeral token
     let data
     try {
-      const res = await fetch('http://127.0.0.1:8000/session')
+      const sessionUrl = import.meta.env.VITE_SESSION_URL
+      if (!sessionUrl) {
+        console.error("VITE_SESSION_URL is not defined")
+        setStatus("❌ Erro token: session URL não configurado")
+        return
+      }
+      const res = await fetch(sessionUrl)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       data = await res.json()
     } catch (err) {
