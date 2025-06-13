@@ -13,7 +13,7 @@ export default function App() {
     // 1. fetch ephemeral token
     let data
     try {
-      const res = await fetch('https://wxyz5678.ngrok.io/session')
+      const res = await fetch('http://127.0.0.1:8000/session')
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       data = await res.json()
     } catch (err) {
