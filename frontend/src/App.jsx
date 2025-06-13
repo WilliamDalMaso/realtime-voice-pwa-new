@@ -5,6 +5,22 @@ export default function App() {
   const audioRef = useRef(null)
   const [status, setStatus] = useState('Olá! Toque para começar…')
   const [listening, setListening] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const lastTap = useRef(0)
+  const tapTimeout = useRef(null)
+
+  const handleTap = () => {
+    const now = Date.now()
+    if (now - lastTap.current < 300) {
+      clearTimeout(tapTimeout.current)
+      setShowSettings((s) => !s)
+    } else {
+      tapTimeout.current = setTimeout(() => {
+        if (!listening && !showSettings) startListening()
+      }, 300)
+    }
+    lastTap.current = now
+  }
 
   const startListening = async () => {
     setListening(true)
@@ -80,7 +96,7 @@ export default function App() {
 
   return (
     <main
-      onClick={!listening ? startListening : undefined}
+      onClick={handleTap}
       style={{
         background: 'black',
         color: 'white',
@@ -92,26 +108,39 @@ export default function App() {
         textAlign: 'center',
         padding: '2rem',
         cursor: !listening ? 'pointer' : 'default',
+        transform: showSettings ? 'rotateY(180deg)' : 'none',
+        transition: 'transform 0.6s',
       }}
     >
-      <h1 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>
-        {status}
-      </h1>
-      <audio ref={audioRef} />
-      {!listening && (
-        <button
-          onClick={startListening}
-          style={{
-            background: 'white',
-            color: 'black',
-            padding: '1rem 2rem',
-            border: 'none',
-            borderRadius: '999px',
-            fontSize: '1rem',
-          }}
-        >
-          Tap to Talk
-        </button>
+      {!showSettings ? (
+        <>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>
+            {status}
+          </h1>
+          <audio ref={audioRef} />
+          {!listening && (
+            <button
+              onClick={startListening}
+              style={{
+                background: 'white',
+                color: 'black',
+                padding: '1rem 2rem',
+                border: 'none',
+                borderRadius: '999px',
+                fontSize: '1rem',
+              }}
+            >
+              Tap to Talk
+            </button>
+          )}
+        </>
+      ) : (
+        <div>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>
+            Settings
+          </h1>
+          <p>Settings go here.</p>
+        </div>
       )}
     </main>
   )
