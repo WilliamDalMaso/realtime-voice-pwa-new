@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 
 export default function App() {
   const audioRef = useRef(null)
+  const micStreamRef = useRef(null)
   const [status, setStatus] = useState('Olá! Toque para começar…')
   const [listening, setListening] = useState(false)
 
@@ -34,14 +35,17 @@ export default function App() {
     audio.autoplay = true
     pc.ontrack = (e) => (audio.srcObject = e.streams[0])
 
-    // 3. ask for mic
-    setStatus('🎙️ Pedindo permissão ao microfone…')
-    let micStream
-    try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    } catch (err) {
-      setStatus(`❌ Permissão negada`)
-      return
+    // 3. ask for mic only once
+    let micStream = micStreamRef.current
+    if (!micStream) {
+      setStatus('🎙️ Pedindo permissão ao microfone…')
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        micStreamRef.current = micStream
+      } catch (err) {
+        setStatus(`❌ Permissão negada`)
+        return
+      }
     }
     pc.addTrack(micStream.getTracks()[0])
 
