@@ -5,6 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .wave-canvas {
@@ -14,6 +15,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  filter: blur(0.5px);
 }
 
 .status-overlay {
@@ -23,31 +25,70 @@
   transform: translateX(-50%);
   text-align: center;
   z-index: 10;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .status-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
   font-weight: 300;
   letter-spacing: 0.5px;
   animation: pulse 2s ease-in-out infinite;
+  margin: 0;
 }
 
 @keyframes pulse {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
   50% {
     opacity: 1;
   }
 }
 
-@media (max-width: 480px) {
+/* Enhance performance on mobile */
+@media (max-width: 768px) {
+  .wave-canvas {
+    filter: none;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  
   .status-text {
     font-size: 0.9rem;
   }
   
   .status-overlay {
     bottom: 15%;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .wave-canvas {
+    filter: none;
+  }
+  
+  .status-text {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .status-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+  }
+  
+  .status-text {
+    color: white;
+    font-weight: 400;
   }
 }
