@@ -10,7 +10,7 @@
   "scope": "/",
   "icons": [
     {
-      "src": "pwa-icon-192.png",
+      "src": "pwago-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
